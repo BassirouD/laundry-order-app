@@ -1,0 +1,23 @@
+.register-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  p-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 1rem;
+  }
+
+  .p-field {
+    margin-bottom: 1.2rem;
+  }
+}
+
+
+.p-field.flex {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}

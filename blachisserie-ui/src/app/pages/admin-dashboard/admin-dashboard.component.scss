@@ -1,0 +1,36 @@
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  //max-width: 900px;
+  margin: 2rem auto 1rem auto;
+}
+
+.admin-card {
+  max-width: 900px;
+  margin: 0 auto 2rem auto;
+  padding: 1rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-radius: 1rem;
+}
+
+.status-pending {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.status-accepted {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.status-refused {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}

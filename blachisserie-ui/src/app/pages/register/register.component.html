@@ -1,0 +1,61 @@
+<p-toast></p-toast>
+
+<div class="register-wrapper">
+    <p-card header="Créer un compte">
+        <div class="p-fluid">
+
+            <div class="p-field">
+                <label for="firstName">Nom</label>
+                <input id="firstName" type="text" pInputText [(ngModel)]="registerRequest.firstName" placeholder="Ex: Dupont"/>
+            </div>
+
+            <div class="p-field">
+                <label for="lastName">Prénom</label>
+                <input id="lastName" type="text" pInputText [(ngModel)]="registerRequest.lastName" placeholder="Ex: Jean"/>
+            </div>
+
+
+            <div class="p-field">
+                <label for="email">Email</label>
+                <input id="email" type="email" pInputText [(ngModel)]="registerRequest.email" placeholder="exemple@mail.com"/>
+            </div>
+
+<!--            <div class="p-field">-->
+<!--                <label for="username">Nom d'utilisateur</label>-->
+<!--                <input id="username" type="text" pInputText [(ngModel)]="username" />-->
+<!--            </div>-->
+
+            <div class="p-field">
+                <label for="password">Mot de passe</label>
+                <input id="password" type="password" pPassword [(ngModel)]="registerRequest.password" toggleMask="true" />
+            </div>
+
+            <div class="p-field">
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <input id="confirmPassword" type="password" pPassword [(ngModel)]="confirmPassword" feedback="false" />
+            </div>
+
+<!--            <div class="p-field">-->
+<!--                <label for="role">Rôle</label>-->
+<!--                <p-dropdown-->
+<!--                        [options]="roles"-->
+<!--                        [(ngModel)]="selectedRole"-->
+<!--                        placeholder="Choisir un rôle">-->
+<!--                </p-dropdown>-->
+<!--            </div>-->
+
+            <br>
+
+            <div class="p-field flex gap-2">
+                <button
+                        pButton
+                        type="button"
+                        label="S'enregistrer"
+                        (click)="register()"
+                        [disabled]="!registerRequest.password || registerRequest.password !== confirmPassword"
+                ></button>
+                <button pButton type="button" label="Retour" class="p-button-secondary" (click)="goToLogin()"></button>
+            </div>
+        </div>
+    </p-card>
+</div>

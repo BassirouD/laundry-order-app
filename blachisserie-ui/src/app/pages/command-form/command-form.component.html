@@ -1,0 +1,61 @@
+<p-toast></p-toast>
+
+<form #orderForm="ngForm" (ngSubmit)="submitOrder()" novalidate>
+    <div class="p-fluid p-formgrid p-grid">
+
+        <div class="p-field p-col-12 p-md-6">
+            <label for="nom">Nom</label>
+            <input pInputText id="nom" [(ngModel)]="userInfos.lastName" name="userNom" readonly />
+        </div>
+
+        <div class="p-field p-col-12 p-md-6">
+            <label for="prenom">Prénom</label>
+            <input pInputText id="prenom" [(ngModel)]="userInfos.firstName" name="userPrenom" readonly />
+        </div>
+
+        <div class="p-field p-col-12 p-md-6">
+            <label for="items">Articles*</label>
+            <p-multiSelect
+                    [options]="availableItems"
+                    [(ngModel)]="order.items"
+                    name="items"
+                    required
+                    #items="ngModel">
+            </p-multiSelect>
+            <small class="p-error" *ngIf="items.invalid && items.touched">
+                Sélectionnez au moins un article.
+            </small>
+        </div>
+
+        <div class="p-field p-col-12 p-md-6">
+            <label for="date">Date souhaitée*</label>
+            <p-calendar
+                    [(ngModel)]="order.date"
+                    name="date"
+                    required
+                    [minDate]="minDate"
+                    dateFormat="dd/mm/yy"
+                    showIcon="true"
+                    #date="ngModel">
+            </p-calendar>
+            <small class="p-error" *ngIf="date.invalid && date.touched">
+                La date est obligatoire.
+            </small>
+        </div>
+
+        <div class="p-field p-col-12">
+            <label for="reason">Motif</label>
+            <input pInputText id="reason" [(ngModel)]="order.reason" name="reason" />
+        </div>
+
+        <div class="p-field p-col-12">
+            <label for="comment">Commentaire</label>
+            <textarea pInputTextarea id="comment" [(ngModel)]="order.comment" name="comment" rows="4"></textarea>
+        </div>
+
+        <div class="p-col-12">
+            <button pButton type="submit" label="Envoyer" class="p-button-success"
+                    [disabled]="orderForm.invalid"></button>
+        </div>
+    </div>
+</form>

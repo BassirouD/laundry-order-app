@@ -1,0 +1,28 @@
+<p-toast></p-toast>
+
+<div class="login-wrapper">
+    <p-card header="Connexion">
+        <div class="p-fluid">
+            <div class="p-field">
+                <label for="email">Email</label>
+                <input id="email" type="text" pInputText [(ngModel)]="authRequest.email" />
+            </div>
+
+            <div class="p-field">
+                <label for="password">Mot de passe</label>
+                <input id="password" type="password" pPassword [(ngModel)]="authRequest.password" feedback="false" />
+            </div>
+            <br>
+
+            <div class="p-field flex gap-2">
+                <button
+                        pButton
+                        type="button"
+                        label="Se connecter"
+                        [disabled]="!authRequest.email || !authRequest.password"
+                        (click)="login()"></button>
+                <button pButton type="button" label="S'enregistrer" class="p-button-secondary" (click)="goToRegister()"></button>
+            </div>
+        </div>
+    </p-card>
+</div>

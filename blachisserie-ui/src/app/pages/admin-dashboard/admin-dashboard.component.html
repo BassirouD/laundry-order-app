@@ -1,0 +1,54 @@
+<div class="admin-header">
+    <h2>Tableau des commandes</h2>
+    <button pButton label="Déconnexion" icon="pi pi-sign-out" class="p-button-danger" (click)="logout()"></button>
+</div>
+
+<p-card class="admin-card">
+    <p-table [value]="orders" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Articles</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-order>
+            <tr>
+                <td>{{ order.userNom }} {{ order.userPrenom }}</td>
+                <td>{{ order.date | date:'shortDate' }}</td>
+                <td>{{ order.items }}</td>
+                <td>
+                <span [ngClass]="getStatusClass(order.status)">
+                  {{ order.status | orderStatus }}
+                </span>
+                </td>
+                <td>
+                    <button pButton icon="pi pi-eye" class="p-button-text" (click)="openDetails(order)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-card>
+
+<p-dialog header="Détails de la commande" [(visible)]="displayDialog" [modal]="true" [style]="{width: '400px'}"
+          [closable]="true">
+    <ng-container *ngIf="selectedOrder">
+        <div class="p-fluid">
+            <p><b>Client :</b> {{ selectedOrder.userPrenom }} {{ selectedOrder.userNom }}</p>
+            <p><b>Date :</b> {{ selectedOrder.date | date:'fullDate' }}</p>
+            <p><b>Articles :</b> {{ selectedOrder.items }}</p>
+            <p *ngIf="selectedOrder.reason"><b>Motif :</b> {{ selectedOrder.reason }}</p>
+            <p *ngIf="selectedOrder.comment"><b>Commentaire :</b> {{ selectedOrder.comment }}</p>
+            <p><b>Statut actuel :</b> {{ selectedOrder.status | orderStatus }}</p>
+        </div>
+
+        <div class="action-buttons">
+            <button pButton label="Valider" icon="pi pi-check" class="p-button-success"
+                    (click)="updateStatus(selectedOrder!, OrderStatus.Approved)"></button>
+            <button pButton label="Refuser" icon="pi pi-times" class="p-button-danger"
+                    (click)="updateStatus(selectedOrder!, OrderStatus.Rejected)"></button>
+        </div>
+    </ng-container>
+</p-dialog>
