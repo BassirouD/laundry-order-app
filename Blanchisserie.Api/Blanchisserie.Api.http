@@ -1,0 +1,16 @@
+@Blanchisserie.Api_HostAddress = http://localhost:5251
+
+
+GET {{Blanchisserie.Api_HostAddress}}/api/Users
+Accept: application/json
+
+###
+POST  {{Blanchisserie.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+    "nom": "Drift",
+    "prenom":"Data",
+    "email": "toto@mail.com",
+    "password": "password123"
+}
