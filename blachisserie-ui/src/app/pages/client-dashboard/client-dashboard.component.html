@@ -1,3 +1,5 @@
+<p-toast />
+
 <p-card class="client-card">
     <ng-template pTemplate="header">
         <div class="card-header">
@@ -43,7 +45,7 @@
 
 <!-- Modal formulaire -->
 <p-dialog header="Nouvelle commande" [(visible)]="displayForm" [modal]="true" [style]="{width: '700px'}">
-    <app-command-form (orderSubmit)="saveOrder($event)"></app-command-form>
+    <app-command-form (orderSubmit)="saveOrder()"></app-command-form>
 </p-dialog>
 
 <!-- Modal détails -->

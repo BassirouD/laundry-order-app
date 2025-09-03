@@ -14,6 +14,8 @@ import {OrderAdminResponse} from "../../models/order-admin-response";
 import {OrderStatus} from "../../models/order-status.enum";
 import {OrderStatusPipe} from "../../utils/order-status.pipe";
 import {ORDER_STATUS_CLASSES} from "../../utils/order-status.constants";
+import { NotificationsService } from '../../services/notifications-service.service';
+import {ToastModule} from "primeng/toast";
 
 @Component({
     selector: 'app-admin-dashboard',
@@ -26,7 +28,8 @@ import {ORDER_STATUS_CLASSES} from "../../utils/order-status.constants";
         TableModule,
         CommonModule,
         ButtonModule,
-        OrderStatusPipe
+        OrderStatusPipe,
+        ToastModule
     ],
     providers: [MessageService, OrderStatusPipe],
     templateUrl: './admin-dashboard.component.html',
@@ -44,11 +47,22 @@ export class AdminDashboardComponent {
         private router: Router,
         private tokenService: TokenService,
         private messageService: MessageService,
+        private notifSvc: NotificationsService,
     ) {
     }
 
     ngOnInit() {
         this.loadAllOrders();
+        this.notifSvc.start(this.tokenService.token);
+        this.notifSvc.messages$.subscribe(notif => {
+            this.messageService.add({
+                severity: notif.type === 'OrderCreated' ? 'success' : 'info',
+                summary: 'Notification',
+                detail: notif.message
+            });
+
+            this.loadAllOrders();
+        });
     }
 
     openDetails(order: OrderAdminResponse) {
@@ -93,7 +107,8 @@ export class AdminDashboardComponent {
 
 
     logout() {
-        this.tokenService.logout()
+        this.notifSvc.stop();
+        this.tokenService.logout();
     }
 
 }

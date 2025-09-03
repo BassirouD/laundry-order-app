@@ -12,12 +12,10 @@ export class TokenService {
     parseJWT(jwt: string) {
         let jwtHelper = new JwtHelperService();
         let objJWT = jwtHelper.decodeToken(jwt);
-        console.log('++++++++++++++++++++++++++++++ ', objJWT);
     }
 
     set token(token: string) {
         localStorage.setItem('token', token);
-        this.parseJWT(token);
     }
 
     get token() {

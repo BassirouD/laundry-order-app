@@ -14,6 +14,8 @@ import {OrderRequest} from "../../models/order-request";
 import {OrderUserResponse} from "../../models/order-user-response";
 import {OrderStatusPipe} from "../../utils/order-status.pipe";
 import {ORDER_STATUS_CLASSES} from "../../utils/order-status.constants";
+import {NotificationsService} from "../../services/notifications-service.service";
+import {ToastModule} from "primeng/toast";
 
 @Component({
     selector: 'app-client-dashboard',
@@ -27,9 +29,10 @@ import {ORDER_STATUS_CLASSES} from "../../utils/order-status.constants";
         NgClass,
         ButtonModule,
         CommonModule,
-        OrderStatusPipe
+        OrderStatusPipe,
+        ToastModule
     ],
-    providers: [MessageService,OrderStatusPipe],
+    providers: [MessageService, OrderStatusPipe],
     templateUrl: './client-dashboard.component.html',
     styleUrl: './client-dashboard.component.scss'
 })
@@ -42,15 +45,29 @@ export class ClientDashboardComponent {
     constructor(
         private manageService: ManageService,
         private tokenSrv: TokenService,
-        private authSrv: AuthService
+        private notifSvc: NotificationsService,
+        private messageService: MessageService,
     ) {
     }
 
     ngOnInit() {
         this.loadOrders();
+
+        this.notifSvc.start(this.tokenSrv.token);
+        this.notifSvc.messages$.subscribe(notif => {
+            if (notif.type === "OrderUpdated") {
+                this.messageService.add({
+                    severity: notif.status === 'Approved' ? 'success' : 'info',
+                    summary: 'Mise à jour commande',
+                    detail: notif.message
+                });
+
+                this.loadOrders();
+            }
+        });
     }
 
-    saveOrder(order: OrderRequest) {
+    saveOrder() {
         this.loadOrders()
         this.displayForm = false;
     }
@@ -78,6 +95,7 @@ export class ClientDashboardComponent {
     }
 
     logout() {
+        this.notifSvc.stop();
         this.tokenSrv.logout();
     }
 }
