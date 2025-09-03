@@ -9,11 +9,9 @@ using Blanchisserie.Api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔹 Ajouter DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BlanchisserieDatabase")));
 
-// 🔹 Ajouter Auth + JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -31,6 +29,24 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            // Si la requête est pour le hub SignalR
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) &&
+                path.StartsWithSegments("/hubs/notifications"))
+            {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization();
@@ -40,6 +56,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddSignalR();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
@@ -47,7 +66,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("http://localhost:4200")
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
 });
 
@@ -67,8 +87,8 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
 
+app.MapHub<NotificationHub>("/hubs/notifications");
 
-// 🔹 Activer Auth
 app.UseAuthentication();
 app.UseAuthorization();
 

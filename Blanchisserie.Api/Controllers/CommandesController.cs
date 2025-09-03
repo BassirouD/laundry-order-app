@@ -15,10 +15,12 @@ namespace Blanchisserie.Api.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly INotificationService _notifier;
 
-        public OrdersController(AppDbContext context)
+        public OrdersController(AppDbContext context, INotificationService notifier)
         {
             _context = context;
+            _notifier = notifier;
         }
 
         private int? GetCurrentUserId()
@@ -92,6 +94,7 @@ namespace Blanchisserie.Api.Controllers
 
             _context.Commandes.Add(commande);
             await _context.SaveChangesAsync();
+            await _notifier.NotifyAdminsOrderCreated(commande);
 
             var result = new OrderReadDto
             {
@@ -145,32 +148,33 @@ namespace Blanchisserie.Api.Controllers
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> UpdateCommandeStatus(int id, [FromBody] OrderStatusUpdateDto dto)
         {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        var commande = await _context.Commandes.FindAsync(id);
-        if (commande == null)
-            return NotFound("Commande non trouvée.");
+            var commande = await _context.Commandes.FindAsync(id);
+            if (commande == null)
+                return NotFound("Commande non trouvée.");
 
-        if (dto.Status != OrderStatus.Approved && dto.Status != OrderStatus.Rejected)
-            return BadRequest("Statut invalide. Seuls VALIDE ou REFUSE sont acceptés.");
+            if (dto.Status != OrderStatus.Approved && dto.Status != OrderStatus.Rejected)
+                return BadRequest("Statut invalide. Seuls VALIDE ou REFUSE sont acceptés.");
 
-        commande.Status = dto.Status;
-        _context.Entry(commande).State = EntityState.Modified;
+            commande.Status = dto.Status;
+            _context.Entry(commande).State = EntityState.Modified;
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!_context.Commandes.Any(c => c.Id == id))
-                return NotFound();
-            else
-                throw;
-        }
+            try
+            {
+                await _context.SaveChangesAsync();
+                await _notifier.NotifyUserOrderUpdated(commande);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Commandes.Any(c => c.Id == id))
+                    return NotFound();
+                else
+                    throw;
+            }
 
-        return NoContent();
+            return NoContent();
         }
 
 

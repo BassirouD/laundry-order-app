@@ -24,7 +24,6 @@ namespace Blanchisserie.Api.Controllers
             _config = config;
         }
 
-        // ✅ Inscription
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
@@ -56,7 +55,6 @@ namespace Blanchisserie.Api.Controllers
             return Ok(userDto);
         }
 
-        // ✅ Connexion
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
@@ -82,7 +80,6 @@ namespace Blanchisserie.Api.Controllers
             });
         }
 
-        // ✅ Récupérer profil utilisateur (besoin d’un JWT valide)
         [HttpGet("me")]
         [Authorize]
         public async Task<ActionResult<UserDto>> GetProfile()
@@ -108,7 +105,6 @@ namespace Blanchisserie.Api.Controllers
             };
         }
 
-        // 🔑 Génération du JWT
         private string GenerateJwtToken(User user)
         {
             var claims = new[]
