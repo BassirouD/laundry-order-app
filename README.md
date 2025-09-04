@@ -23,6 +23,23 @@ Les utilisateurs classiques doivent s’inscrire via le frontend à partir de la
 
 Ils pourront ensuite créer des commandes, qui seront en attente de validation par un administrateur.
 
+
+---
+
+## 🔔 Notifications en temps réel
+L’application utilise SignalR pour envoyer des notifications instantanées entre le backend et le frontend :
+- **Côté utilisateur** : reçoit une notification dès qu’un administrateur **valide** ou **refuse** une **commande**.
+- **Côté administrateur** : reçoit une notification dès qu’un utilisateur **crée une nouvelle commande**.
+
+### Fonctionnement
+- Le backend expose un **SignalR Hub** sécurisé par JWT (/hubs/notifications).
+- Les clients (Angular) se connectent au hub et s’abonnent aux notifications via le service **NotificationsService**.
+- Les notifications sont affichées dans l’interface via PrimeNG MessageService.
+- Les notifications sont ciblées :
+   - Chaque utilisateur reçoit uniquement les notifications qui le concernent.
+   - Tous les administrateurs reçoivent les notifications liées aux nouvelles commandes.
+
+
 ---
 
 ## 🚀 Prérequis
@@ -33,12 +50,10 @@ Avant de commencer, assurez-vous d’avoir installé :
 - [Node.js](https://nodejs.org/)
 - [Angular CLI](https://angular.dev/cli) (`npm install -g @angular/cli`)
 - [SQL Server](https://www.microsoft.com/sql-server) ou Docker avec SQL Server
+
 ## Lancement
 
-
----
-
-## ⚙️ Lancer le backend (API)
+### ⚙️ Lancer le backend (API)
 
 1. Aller dans le dossier du backend :
    ```bash
@@ -56,3 +71,17 @@ Avant de commencer, assurez-vous d’avoir installé :
     ```bash
    dotnet run
    ```
+
+### 💻 Lancer le frontend (UI)
+1. Aller dans le dossier du frontend :
+   ```bash
+   cd blanchisserie-ui
+    ```
+2. Installer les dépendances :
+    ```bash
+    npm install
+    ```
+3. Démarrer l’application Angular :
+   ```bash
+    ng serve
+    ```
